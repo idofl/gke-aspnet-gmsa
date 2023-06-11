@@ -65,7 +65,12 @@ namespace DotNetDemoAppMvc.Controllers
                 var trustedDomainWithUserContext = new PrincipalContext(ContextType.Domain, "sub.secondary.lab", "DC=sub,DC=secondary,DC=lab", "sub\\administrator", "P@ssw0rd12!");
                 groupNames.Add(GetPrincipalName(trustedDomainWithUserContext, User.Identity.Name, "Trusted using AD User"));
 
+                var impContext = wi.Impersonate();
                 var trustedDomainContext = new PrincipalContext(ContextType.Domain, "sub.secondary.lab", "DC=sub,DC=secondary,DC=lab");
+                groupNames.Add(GetPrincipalName(trustedDomainContext, User.Identity.Name, "Trusted using impersonation"));
+                impContext.Undo();
+
+                trustedDomainContext = new PrincipalContext(ContextType.Domain, "sub.secondary.lab", "DC=sub,DC=secondary,DC=lab");
                 groupNames.Add(GetPrincipalName(trustedDomainContext, User.Identity.Name, "Trusted using gMSA"));
 
 
