@@ -20,6 +20,7 @@ using System.Web.Mvc;
 using System.Security.Principal;
 using System.Text;
 using DotNetDemoAppMvc.Models;
+using System.DirectoryServices.AccountManagement;
 
 namespace DotNetDemoAppMvc.Controllers
 {
@@ -56,7 +57,38 @@ namespace DotNetDemoAppMvc.Controllers
                 groupNames.Add(group.Translate(typeof(NTAccount)).Value);
             }
 
+            try
+            {
+                var managedAdContext = new PrincipalContext(ContextType.Domain, "test-gmsa.lab","DC=test-gmsa,DC=lab");
+                groupNames.Add(GetPrincipalName(managedAdContext, User.Identity.Name, "Managed AD"));
+
+                var trustedDomainWithUserContext = new PrincipalContext(ContextType.Domain, "sub.secondary.lab", "DC=sub,DC=secondary,DC=lab", "sub\\administrator", "P@ssw0rd12!");
+                groupNames.Add(GetPrincipalName(trustedDomainWithUserContext, User.Identity.Name, "Trusted using AD User"));
+
+                var trustedDomainContext = new PrincipalContext(ContextType.Domain, "sub.secondary.lab", "DC=sub,DC=secondary,DC=lab");
+                groupNames.Add(GetPrincipalName(trustedDomainContext, User.Identity.Name, "Trusted using gMSA"));
+
+
+            }
+            catch
+            {
+                // Silently catch to skip errors 
+            }
+
             return View(new SecureViewModel (){GroupNames = groupNames, AuthenticationType=authenticationType });
+        }
+        private string GetPrincipalName(PrincipalContext context, string userName, string contextDescription)
+        {
+            var userPrincipal = UserPrincipal.FindByIdentity(context, userName);
+
+            if (userPrincipal == null)
+            {
+                return "Searching " + contextDescription + ": user not found";
+            }
+            else
+            {
+                return "Searching " + contextDescription + ": " + userPrincipal.DisplayName;
+            }
         }
     }
 }
