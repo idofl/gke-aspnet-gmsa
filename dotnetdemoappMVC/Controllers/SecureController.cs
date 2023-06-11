@@ -59,7 +59,7 @@ namespace DotNetDemoAppMvc.Controllers
 
             try
             {
-                var managedAdContext = new PrincipalContext(ContextType.Domain, "test-gmsa.lab","DC=test-gmsa,DC=lab");
+                var managedAdContext = new PrincipalContext(ContextType.Domain, "gmsa-test.lab","DC=gmsa-test,DC=lab");
                 groupNames.Add(GetPrincipalName(managedAdContext, User.Identity.Name, "Managed AD"));
 
                 var trustedDomainWithUserContext = new PrincipalContext(ContextType.Domain, "sub.secondary.lab", "DC=sub,DC=secondary,DC=lab", "sub\\administrator", "P@ssw0rd12!");
