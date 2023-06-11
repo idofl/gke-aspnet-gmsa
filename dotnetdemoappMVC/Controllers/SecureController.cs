@@ -70,9 +70,10 @@ namespace DotNetDemoAppMvc.Controllers
 
 
             }
-            catch
+            catch (Exception ex)
             {
                 // Silently catch to skip errors 
+                groupNames.Add(ex.ToString());
             }
 
             return View(new SecureViewModel (){GroupNames = groupNames, AuthenticationType=authenticationType });
