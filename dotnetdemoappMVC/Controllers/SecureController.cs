@@ -59,6 +59,8 @@ namespace DotNetDemoAppMvc.Controllers
 
             try
             {
+                groupNames.Add(wi.ImpersonationLevel.ToString());
+                
                 var managedAdContext = new PrincipalContext(ContextType.Domain, "gmsa-test.lab","DC=gmsa-test,DC=lab");
                 groupNames.Add(GetPrincipalName(managedAdContext, User.Identity.Name, "Managed AD"));
 
