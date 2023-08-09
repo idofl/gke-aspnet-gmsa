@@ -18,14 +18,16 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+# escape=`
+ARG WINDOWS_VERSION
 
-FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019 as builder
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-${WINDOWS_VERSION} as builder
 COPY . /temp/
 WORKDIR /temp
 RUN nuget restore
 RUN msbuild /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:DeployTarget=WebPublish /p:publishUrl=c:\output
 
-FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019
+FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-${WINDOWS_VERSION}
 SHELL ["powershell.exe", "-NoProfile", "-Command"]
 RUN Install-WindowsFeature RSAT-AD-Powershell, Web-Windows-Auth
 RUN Set-WebConfigurationProperty -filter /system.WebServer/security/authentication/AnonymousAuthentication -PSPath IIS:\ -name enabled -value true  ; \
